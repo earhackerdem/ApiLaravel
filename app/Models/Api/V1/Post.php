@@ -2,6 +2,7 @@
 
 namespace App\Models\Api\V1;
 
+use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +11,11 @@ class Post extends Model
     use HasFactory;
     const BORRADOR = 1;
     const PUBLICADO = 2;
+
+    protected static function newFactory()
+    {
+        return PostFactory::new();
+    }
 
     //Relación uno a muchos inversa
 
@@ -32,7 +38,7 @@ class Post extends Model
     //Relación uno a muchos polimorfica
     public function images()
     {
-        return $this->morphMany(Image::class,'imageable');
+        return $this->morphMany(Image::class, 'imageable');
     }
 
 

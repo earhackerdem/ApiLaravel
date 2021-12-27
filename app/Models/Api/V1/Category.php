@@ -22,6 +22,8 @@ class Category extends Model
 
     protected $allowFilter = ['id','name','slug'];
 
+    protected $allowSort = ['id','name','slug'];
+
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -61,5 +63,31 @@ class Category extends Model
                 $query->where($filter,'LIKE','%' . $value. '%');
             }
         }
+    }
+
+    public function scopeSort(Builder $query)
+    {
+        if (empty($this->allowSort)||empty(request('sort'))) {
+            return;
+        }
+
+        $sortFields = explode(',',request('sort'));
+        $allowSort = collect($this->allowSort);
+
+        foreach($sortFields as $sortField){
+
+            $direction = 'asc';
+
+            if( substr($sortField, 0, 1) === '-'){
+                $direction = 'desc';
+                $sortField = substr($sortField, 1);
+            }
+
+            if($allowSort->contains($sortField)){
+
+                $query->orderBy($sortField,$direction);
+            }
+        }
+
     }
 }

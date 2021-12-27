@@ -2,13 +2,14 @@
 
 namespace App\Models\Api\V1;
 
+use App\Traits\ApiTrait;
 use Database\Factories\ImageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Image extends Model
 {
-    use HasFactory;
+    use HasFactory, ApiTrait;
 
     protected static function newFactory()
     {

@@ -14,6 +14,8 @@ class Post extends Model
     const BORRADOR = 1;
     const PUBLICADO = 2;
 
+    protected $fillable = ['name','slug','extract','body','status','category_id','user_id'];
+
     protected static function newFactory()
     {
         return PostFactory::new();

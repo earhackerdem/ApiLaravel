@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\V1\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +23,5 @@ Route::post('register', [RegisterController::class, 'store'])->name('api.v1.regi
 Route::apiResource('categories', CategoryController::class)->names('api.v1.categories');
 
 Route::apiResource('posts',PostController::class)->names('api.v1.posts');
+
+Route::post('login',[LoginController::class,'store']);

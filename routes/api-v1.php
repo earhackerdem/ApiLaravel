@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\CategoryController;
-use App\Http\Controllers\Api\V1\RegisterController;
+use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

@@ -19,15 +19,19 @@
     <div class="mt-5 md:mt-0 md:col-span-2">
 
         <div>
-            <div class="px-4 py-5 sm:p-6 bg-white shadow rounded-tl-md rounded-tr-md">
+            <div class="px-4 py-5 sm:p-6 bg-white shadow {{ isset($actions) ? 'sm:rounded-tl-md sm:rounded-tr-md' : 'sm:rounded-md' }}">
 
                 {{ $slot }}
 
             </div>
 
-            <div class="px-6 py-3 bg-gray-100 shadow flex justify-end items-center rounded-bl-md rounded-br-md">
-                {{ $actions }}
-            </div>
+            @isset($actions)
+                <div class="px-6 py-3 bg-gray-100 shadow flex justify-end items-center sm:rounded-bl-md sm:rounded-br-md">
+                    {{ $actions }}
+                </div>
+            @endisset
+
+
         </div>
 
     </div>

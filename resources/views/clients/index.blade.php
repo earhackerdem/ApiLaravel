@@ -21,7 +21,29 @@
                 Ingrese los datos solicitados para poder crear un nuevo cliente
             </x-slot>
 
-            eooooo
+            <div class="grid grid-cols-6 gap-6">
+
+                <div class="col-span-6 sm:col-span-4">
+
+                    <x-label>
+                        Nombre
+                    </x-label>
+
+                    <x-input type="text" class="w-full mt-1" />
+
+                </div>
+
+                <div class="col-span-6 sm:col-span-4">
+
+                    <x-label>
+                        URL de redirección
+                    </x-label>
+
+                    <x-input type="text" class="w-full mt-1" />
+
+                </div>
+
+            </div>
 
             <x-slot name="actions">
 

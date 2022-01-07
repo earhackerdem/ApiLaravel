@@ -16,11 +16,14 @@
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
         {{-- Vue --}}
-        
+
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 
         {{-- Axios --}}
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        {{-- SweatAlert2 --}}
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     </head>
     <body class="font-sans antialiased">
@@ -39,5 +42,8 @@
                 {{ $slot }}
             </main>
         </div>
+
+        @stack('js')
+
     </body>
 </html>

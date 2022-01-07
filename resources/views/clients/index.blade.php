@@ -8,7 +8,7 @@
 
     </x-slot>
 
-    <x-container class="py-8">
+    <x-container id="app" class="py-8">
 
         <x-form-section>
 
@@ -29,7 +29,7 @@
                         Nombre
                     </x-label>
 
-                    <x-input type="text" class="w-full mt-1" />
+                    <x-input v-model="createForm.name" type="text" class="w-full mt-1" />
 
                 </div>
 
@@ -39,7 +39,7 @@
                         URL de redirección
                     </x-label>
 
-                    <x-input type="text" class="w-full mt-1" />
+                    <x-input v-model="createForm.redirect" type="text" class="w-full mt-1" />
 
                 </div>
 
@@ -47,7 +47,7 @@
 
             <x-slot name="actions">
 
-                <x-button>
+                <x-button v-on:click="store">
                     Crear
                 </x-button>
 
@@ -56,5 +56,36 @@
         </x-form-section>
 
     </x-container>
+
+    @push('js')
+        <script>
+            new Vue({
+                el: "#app",
+                data: {
+                    createForm: {
+                        errors: [],
+                        name: null,
+                        redirect: null,
+                    }
+                },
+                methods: {
+                    store() {
+                        axios.post('/oauth/clients', this.createForm)
+                            .then(response => {
+                                this.createForm.name = null;
+                                this.createForm.redirect = null;
+                                Swal.fire(
+                                    'Deleted',
+                                    'Se ha guardado',
+                                    'success'
+                                )
+                            }).catch(error => {
+                                alert('No has completado los datos correspondientes')
+                            })
+                    }
+                }
+            })
+        </script>
+    @endpush
 
 </x-app-layout>

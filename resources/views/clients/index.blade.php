@@ -165,13 +165,13 @@
             </x-slot>
 
             <x-slot name="footer">
-                <button type="button"
-                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                <button type="button" v-on:click="update()" v-bind:disabled="editForm.disabled"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
                     Actualizar
                 </button>
-                <button type="button"
+                <button v-on:click="editForm.open = false" type="button"
                     class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                    Cancel
+                    Cancelar
                 </button>
             </x-slot>
 
@@ -198,6 +198,7 @@
                         errors: [],
                         disabled: false,
                         errors: [],
+                        id: null,
                         name: null,
                         redirect: null,
                     }
@@ -235,6 +236,35 @@
                     },
                     edit(client) {
                         this.editForm.open = true;
+                        this.editForm.errors = [];
+                        this.editForm.id = client.id;
+                        this.editForm.name = client.name;
+                        this.editForm.redirect = client.redirect;
+                    },
+                    update() {
+
+                        this.editForm.disabled = true;
+
+                        axios.put('/oauth/clients/' + this.editForm.id, this.editForm)
+                            .then(response => {
+                                this.editForm.open = false;
+                                this.editForm.disabled = false;
+                                this.editForm.name = null;
+                                this.editForm.redirect = null;
+                                this.editForm.errors = [];
+
+                                Swal.fire(
+                                    '¡Actualizado con éxito!',
+                                    'El cliente se actualizo satisfactoriamente',
+                                    'success'
+                                )
+                                this.getClients();
+
+                            }).catch(error => {
+                                this.editForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                this.editForm.disabled = false;
+                            })
+
                     },
                     destroy(client) {
                         Swal.fire({

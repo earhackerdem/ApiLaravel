@@ -10,6 +10,7 @@
 
     <x-container id="app" class="py-8">
 
+        {{-- Crear clientes --}}
         <x-form-section class="mb-12">
 
             <x-slot name="title">
@@ -66,6 +67,7 @@
 
         </x-form-section>
 
+        {{-- Mostrar clientes --}}
         <x-form-section v-if="clients.length > 0">
 
             <x-slot name="title">
@@ -91,10 +93,11 @@
                     <tbody class="divide-y divide-gray-300">
                         <tr v-for="client in clients">
                             <td class="py-2">
-                                @{{ client . name }}
+                                @{{ client.name }}
                             </td>
                             <td class="flex divide-x divide-gray-300 py-2">
-                                <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer">
+                                <a v-on:click="edit(client)"
+                                    class="pr-2 hover:text-blue-600 font-semibold cursor-pointer">
                                     Editar
                                 </a>
                                 <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer"
@@ -114,6 +117,67 @@
 
         </x-form-section>
 
+        {{-- Modal --}}
+        <x-dialog-modal modal="editForm.open">
+            <x-slot name="title">
+                Editar cliente
+            </x-slot>
+
+            <x-slot name="content">
+
+                <div class="space-y-6">
+
+                    <div v-if="editForm.errors.length > 0"
+                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong class="font-bold">Whoops!</strong>
+                        <span>!Algo salio mal</span>
+                        <ul>
+                            <li v-for="error in editForm.errors">
+                                @{{ error }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="">
+
+
+
+                        <x-label>
+                            Nombre
+                        </x-label>
+
+                        <x-input v-model="editForm.name" type="text" class="w-full mt-1" />
+
+                    </div>
+
+                    <div class="">
+
+                        <x-label>
+                            URL de redirección
+                        </x-label>
+
+                        <x-input v-model="editForm.redirect" type="text" class="w-full mt-1" />
+
+                    </div>
+
+                </div>
+
+            </x-slot>
+
+            <x-slot name="footer">
+                <button type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Actualizar
+                </button>
+                <button type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </x-slot>
+
+        </x-dialog-modal>
+
+
     </x-container>
 
     @push('js')
@@ -123,6 +187,14 @@
                 data: {
                     clients: [],
                     createForm: {
+                        errors: [],
+                        disabled: false,
+                        errors: [],
+                        name: null,
+                        redirect: null,
+                    },
+                    editForm: {
+                        open: false,
                         errors: [],
                         disabled: false,
                         errors: [],
@@ -148,6 +220,7 @@
                             .then(response => {
                                 this.createForm.name = null;
                                 this.createForm.redirect = null;
+                                this.createForm.errors = [];
                                 Swal.fire(
                                     '¡Creado con éxito!',
                                     'El cliente se creo satisfactoriamente',
@@ -159,6 +232,9 @@
                                 this.createForm.disabled = false;
                                 this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
                             })
+                    },
+                    edit(client) {
+                        this.editForm.open = true;
                     },
                     destroy(client) {
                         Swal.fire({

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\TokenController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,5 @@ Route::get('/dashboard', function () {
 require __DIR__.'/auth.php';
 
 Route::get('clients',[ClientController::class,'index'])->name('clients.index');
+
+Route::get('api-tokens',[TokenController::class,'index'])->name('tokens.index');

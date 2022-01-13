@@ -10,6 +10,7 @@
 
         <x-container class="py-8">
 
+            {{-- Crear access token --}}
             <x-form-section class="mb-12">
                 <x-slot name="title">
                     AccessToken
@@ -46,6 +47,58 @@
                 </x-slot>
             </x-form-section>
 
+            {{-- Mostrar access tokens --}}
+            <x-form-section v-if="tokens.length > 0">
+
+                <x-slot name="title">
+                    Listado de Access Tokens
+                </x-slot>
+
+
+                <x-slot name="description">
+                    Aquí podrás encontrar todos los Access Tokens que has agregado
+                </x-slot>
+
+                <div>
+
+                    <table class="text-gray-600">
+
+                        <thead class="border-b border-gray-300">
+                            <tr class="text-left">
+                                <th class="py-2 w-full">Nombre</th>
+                                <th class="py-2">Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-300">
+                            <tr v-for="token in tokens">
+                                <td class="py-2">
+                                    @{{ token.name }}
+                                </td>
+                                <td class="flex divide-x divide-gray-300 py-2">
+                                    <a v-on:click="" class="pr-2 hover:text-green-600 font-semibold cursor-pointer">
+                                        Ver
+                                    </a>
+                                    <a v-on:click="" class="px-2 hover:text-blue-600 font-semibold cursor-pointer">
+                                        Editar
+                                    </a>
+                                    <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer"
+                                        v-on:click="revoke(token)">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+            </x-form-section>
+
         </x-container>
 
     </div>
@@ -56,13 +109,23 @@
             new Vue({
                 el: "#app",
                 data: {
+                    tokens: [],
                     form: {
                         name: '',
                         errors: [],
                         disabled: false,
                     },
                 },
+                mounted() {
+                    this.getTokens();
+                },
                 methods: {
+                    getTokens() {
+                        axios.get('/oauth/personal-access-tokens')
+                            .then(response => {
+                                this.tokens = response.data;
+                            });
+                    },
                     store() {
                         this.form.disable = true;
                         axios.post('/oauth/personal-access-tokens', this.form)
@@ -70,11 +133,35 @@
                                 this.form.name = null;
                                 this.form.errors = [];
                                 this.form.disable = false;
+                                this.getTokens();
                             })
                             .catch(error => {
                                 this.form.errors = _.flatten(_.toArray(error.response.data.errors));
                                 this.form.disable = false;
                             })
+                    },
+                    revoke(token) {
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                axios.delete('/oauth/personal-access-tokens/' + token.id)
+                                    .then(response => {
+                                        this.getTokens();
+                                    });
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                )
+                            }
+                        })
                     }
                 },
             });

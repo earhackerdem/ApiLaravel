@@ -33,10 +33,24 @@
                             </ul>
                         </div>
 
-                        <x-label>
-                            Nombre
-                        </x-label>
-                        <x-input v-model="form.name" type="text" class="w-full mt-1" />
+                        <div>
+                            <x-label>
+                                Nombre
+                            </x-label>
+                            <x-input v-model="form.name" type="text" class="w-full mt-1" />
+                        </div>
+
+                        <div v-if="scopes.length > 0">
+                            <x-label>
+                                Scopes
+                            </x-label>
+                            <div v-for="scope in scopes">
+                                <x-label>
+                                    <input type="checkbox" name="scopes" :value="scope.id" v-model="form.scopes">
+                                    @{{ scope.id }}
+                                </x-label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -76,7 +90,8 @@
                                     @{{ token.name }}
                                 </td>
                                 <td class="flex divide-x divide-gray-300 py-2">
-                                    <a v-on:click="show(token)" class="pr-2 hover:text-green-600 font-semibold cursor-pointer">
+                                    <a v-on:click="show(token)"
+                                        class="pr-2 hover:text-green-600 font-semibold cursor-pointer">
                                         Ver
                                     </a>
                                     <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer"
@@ -137,8 +152,10 @@
                 el: "#app",
                 data: {
                     tokens: [],
+                    scopes: [],
                     form: {
                         name: '',
+                        scopes: [],
                         errors: [],
                         disabled: false,
                     },
@@ -149,8 +166,15 @@
                 },
                 mounted() {
                     this.getTokens();
+                    this.getScopes();
                 },
                 methods: {
+                    getScopes() {
+                        axios.get('/oauth/scopes')
+                            .then(response => {
+                                this.scopes = response.data;
+                            });
+                    },
                     getTokens() {
                         axios.get('/oauth/personal-access-tokens')
                             .then(response => {
@@ -167,6 +191,7 @@
                             .then(response => {
                                 this.form.name = null;
                                 this.form.errors = [];
+                                this.form.scopes = [];
                                 this.form.disable = false;
                                 this.getTokens();
                             })
